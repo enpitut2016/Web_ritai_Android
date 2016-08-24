@@ -1,0 +1,2 @@
+# Web_ritai_Android
+Webり隊のAndroidアプリのリポジトリです
