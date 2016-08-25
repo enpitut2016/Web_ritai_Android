@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">#FFFFFF</item>
+        <item name="android:colorPrimaryDark">#A9A9A9</item>
+        <item name="android:colorAccent">#E91E63</item>
+        <item name="android:colorButtonNormal">#4169E1</item>
+    </style>
+
+    <style name="viewPagerTitleStrip">
+        <item name="android:textSize">25sp</item>
+    </style>
+</resources>

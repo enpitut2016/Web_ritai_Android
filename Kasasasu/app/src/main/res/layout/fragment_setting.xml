@@ -1,0 +1,56 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/prefecureText"
+        android:hint="都道府県"
+        android:textSize="20sp"
+        android:layout_centerHorizontal = "true"
+        android:layout_below = "@+id/switch1"
+        android:layout_margin="20dp"
+
+        android:layout_weight="1"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="位置情報を自分で設定する"
+        android:textSize="20sp"
+        android:id="@+id/switch1"
+        android:textOn="Wi-Fi"
+        android:textOff="自分で設定"
+        android:layout_centerHorizontal = "true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="50dp"
+        android:layout_weight="2.10"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="設定を保存"
+        android:textSize="25sp"
+        android:textColor="#FFFFFF"
+        android:id="@+id/saveButton"
+        android:layout_centerHorizontal = "true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="50dp"
+        android:layout_weight="1"
+        android:onClick="saveSetting"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cityText"
+        android:hint="市区町村"
+        android:textSize="20sp"
+        android:layout_centerHorizontal = "true"
+        android:layout_below = "@id/prefecureText"
+        android:layout_margin="20dp"
+        android:focusable="false"
+        android:layout_weight="1"/>
+</RelativeLayout>
