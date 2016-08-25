@@ -1,6 +1,7 @@
 package com.example.kasasasu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -54,7 +55,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		latlon = new HashMap<>();
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
+		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on") && false) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
 			try{
@@ -68,12 +69,14 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lat", lat);
 				latlon.put("lon", lon);
 				Log.d("geocode", lat + "/" + lon);
+
 			}catch(IOException e){
 				e.printStackTrace();
 			}
 		} else {
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            Log.d("test","test");
 		}
 
 		sensorManager = (SensorManager)activity.getSystemService(activity.SENSOR_SERVICE);
@@ -107,6 +110,39 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
 	}
+
+    /**
+     * 緯度・経度から住所を取得する。
+     * @param context
+     * @param latitude
+     * @param longitude
+     * @return 住所
+     */
+    public static String getAddress(
+            Context context, double latitude, double longitude) {
+
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addresses;
+        StringBuilder result = new StringBuilder();
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        }
+        catch (IOException e) {
+            return "";
+        }
+
+        for (Address address : addresses) {
+            int idx = address.getMaxAddressLineIndex();
+            // 1番目のレコードは国名のため省略
+            for (int i = 1; i <= idx; i++) {
+                result.append(address.getAddressLine(i));
+            }
+        }
+
+        Log.d("address", result.toString());
+        return "";
+    }
 
 	@Override
 	public void onClick(View v) {
@@ -210,10 +246,14 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 			HttpGetTask task = new HttpGetTask(activity, tv1, latlon);
 			task.execute();
 			Log.d("latlon", latlon.toString());
+            //住所の取得
+            getAddress(activity,latlon.get("lat"),latlon.get("lon"));
 			audioPlay();
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
 		}
 		Log.d("frag", "judgeNeedOfUmb");
 	}
+
+
 }
