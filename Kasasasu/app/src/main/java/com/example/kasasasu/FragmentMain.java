@@ -75,7 +75,11 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lon", lon);
 				Log.d("geocode", lat + "/" + lon);
                 Log.d("address get", address.getAdminArea() );
-                Log.d("address get",address.getLocality() );
+                Log.d("address get", address.getLocality() );
+                Log.d("address get", address.getFeatureName());
+                locate.put("admin", address.getAdminArea());
+                locate.put("local", address.getLocality());
+                locate.put("feature", address.getFeatureName());
                 //locate.put("admin", address.getAdminArea());
                 //locate.put("local", address.getLocality());
 
@@ -111,54 +115,24 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lon", lon);
 				settings.put("textSetting", "on");
 				Log.d("geocode", lat + "/" + lon);
+                Log.d("address get", address.toString());
                 Log.d("address get", address.getAdminArea() );
-                Log.d("address get",address.getLocality() );
+                Log.d("address get", address.getLocality() );
+                Log.d("address get", address.getFeatureName());
                 locate.put("admin", address.getAdminArea());
                 locate.put("local", address.getLocality());
-                Log.d("address get",address.toString());
+                locate.put("feature", address.getFeatureName());
+
 			}catch(IOException e){
 				e.printStackTrace();
 			}
 		} else {
 			latlon.clear();
-            //locate.clear();
+            locate.clear();
 			mLocationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
 	}
-
-    /**
-     * 緯度・経度から住所を取得する。
-     * @param context
-     * @param latitude
-     * @param longitude
-     * @return 住所
-     */
-    public static String getAddress(
-            Context context, double latitude, double longitude) {
-
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses;
-        StringBuilder result = new StringBuilder();
-
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        }
-        catch (IOException e) {
-            return "";
-        }
-
-        for (Address address : addresses) {
-            int idx = address.getMaxAddressLineIndex();
-            // 1番目のレコードは国名のため省略
-            for (int i = 1; i <= idx; i++) {
-                result.append(address.getAddressLine(i));
-            }
-        }
-
-        //Log.d("address", result.toString());
-        return result.toString();
-    }
 
 	@Override
 	public void onClick(View v) {
@@ -200,10 +174,11 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
                 address = addressList.get(0);
                 Log.d("address get wifi", address.getAdminArea() );
                 Log.d("address get wifi", address.getLocality() );
-                Log.d("address get wifi", address.toString());
+                Log.d("address get wifi", address.getFeatureName());
 
-                locate.put("admin", address.getAdminArea().toString());
-                locate.put("local", address.getLocality().toString());
+                locate.put("admin", address.getAdminArea());
+                locate.put("local", address.getLocality());
+                locate.put("feature", address.getFeatureName());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -292,10 +267,6 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
             }
             task.execute();
 			Log.d("latlon", latlon.toString());
-            //住所の取得
-            //String address = getAddress(activity,latlon.get("lat"),latlon.get("lon"));
-            //Log.d("address", address);
-           // Log.d("address", address.substring(11,address.length()-1));
 			audioPlay();
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();

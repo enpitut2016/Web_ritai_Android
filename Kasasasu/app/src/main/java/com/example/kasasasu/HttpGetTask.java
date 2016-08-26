@@ -28,8 +28,10 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 	private ProgressDialog mDialog = null;
 	public static final int CNT = 7;
 	public static final int RAIN_ID = 500;
-    private String encodedString_ibaraki;
-    private String encodedString_tsukuba;
+    private String encodedString_admin;
+    private String encodedString_local;
+    private String encodedString_feature;
+
 
 	private String mUri;
 
@@ -38,9 +40,13 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 		mTextView = textView;
 
         try {
-            encodedString_ibaraki = URLEncoder.encode(location.get("admin"), "UTF-8");
-            encodedString_tsukuba = URLEncoder.encode(location.get("local"), "UTF-8");
-            mUri = "https://shrouded-forest-60165.herokuapp.com/?pref=" + encodedString_ibaraki + "&city=" +encodedString_tsukuba;
+            encodedString_admin = URLEncoder.encode(location.get("admin"), "UTF-8");
+            encodedString_local = URLEncoder.encode(location.get("local"), "UTF-8");
+            encodedString_feature = URLEncoder.encode(location.get("feature"), "UTF-8");
+            mUri = "https://shrouded-forest-60165.herokuapp.com/?pref=" + encodedString_admin + "&city=" +encodedString_local;
+            if(location.get("feature").matches(".*"+"区")){
+                mUri = mUri + encodedString_feature;
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
