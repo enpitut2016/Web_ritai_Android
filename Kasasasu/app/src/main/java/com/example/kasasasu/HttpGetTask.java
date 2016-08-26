@@ -12,8 +12,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,14 +28,25 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 	private ProgressDialog mDialog = null;
 	public static final int CNT = 7;
 	public static final int RAIN_ID = 500;
+    private String encodedString_ibaraki;
+    private String encodedString_tsukuba;
 
 	private String mUri;
 
-	public HttpGetTask(Activity parentActivity, TextView textView, HashMap<String, Double> latlon){
+	public HttpGetTask(Activity parentActivity, TextView textView, HashMap<String, String> location) throws UnsupportedEncodingException {
 		mParentActivity = parentActivity;
 		mTextView = textView;
-		mUri = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latlon.get("lat") + /*36.111165*/ "&lon=" + latlon.get("lon") + /*140.099988*/"&APPID=ee1e260c476e8337f1f07ebc11b8f32c&cnt=" + CNT;
-		Log.d("latlon", latlon.get("lat") + "/" + latlon.get("lon"));
+
+        try {
+            encodedString_ibaraki = URLEncoder.encode(location.get("admin"), "UTF-8");
+            encodedString_tsukuba = URLEncoder.encode(location.get("local"), "UTF-8");
+            mUri = "https://shrouded-forest-60165.herokuapp.com/?pref=" + encodedString_ibaraki + "&city=" +encodedString_tsukuba;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        //mUri = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latlon.get("lat") + /*36.111165*/ "&lon=" + latlon.get("lon") + /*140.099988*/"&APPID=ee1e260c476e8337f1f07ebc11b8f32c&cnt=" + CNT;
+
+		Log.d("admin / local", location.get("admin") + "/" + location.get("local"));
 	}
 
 	@Override
@@ -51,9 +64,13 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 	@Override
 	protected void onPostExecute(Integer weatherId){
 		mDialog.dismiss();
-		if (weatherId.equals(new Integer(RAIN_ID))) {
+		//if (weatherId.equals(new Integer(RAIN_ID))) {
+        if (false) {
 			this.mTextView.setText("傘が必要です。");
 		}
+        else{
+            this.mTextView.setText("test");
+        }
 	}
 
 	private Integer exec_get(){
@@ -73,11 +90,14 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 				sb.append(line);
 			}
 			String data = sb.toString();
+            Log.d("response",data);
 
 			JSONObject rootObj = new JSONObject(data);
-			JSONArray listArray = rootObj.getJSONArray("list");
+			JSONArray listArray = rootObj.getJSONArray("weathers");
+            Log.d("json list" ,listArray.toString());
 
-			for (int i=0; i<CNT; i++) {
+			/*
+            for (int i=0; i<CNT; i++) {
 				JSONObject obj = listArray.getJSONObject(i);
 				// 地点名
 				//String cityName = obj.getString("name");
@@ -89,9 +109,9 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 				//float maxTemp = (float) (mainObj.getDouble("temp_max") - 273.15f);
 
 				// 湿度
-				/*if (mainObj.has("humidity")) {
+				if (mainObj.has("humidity")) {
 					int humidity = mainObj.getInt("humidity");
-				}*/
+				}
 
 				// 取得時間
 				//long time = obj.getLong("dt");
@@ -107,7 +127,8 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 				if (weatherId == 500) {
 					return weatherId;
 				}
-			}
+			}*/
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally {

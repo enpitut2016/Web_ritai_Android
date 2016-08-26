@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 public class FragmentMain extends Fragment implements LocationListener, View.OnClickListener, SensorEventListener {
 	private HashMap<String, Double> latlon;
+    private HashMap<String, String> locate;
 	private LocationManager mLocationManager;
 	private KasasasuSQLiteOpenHelper DBHelper;
 	private HashMap<String, String> settings;
@@ -45,6 +47,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	private MediaPlayer mediaPlayer;
 	private Date lastDate = new Date(0);
 
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
@@ -53,6 +56,8 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		button.setOnClickListener(this);
 
 		latlon = new HashMap<>();
+        locate = new HashMap<>();
+
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
 		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
@@ -69,6 +74,10 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lat", lat);
 				latlon.put("lon", lon);
 				Log.d("geocode", lat + "/" + lon);
+                Log.d("address get", address.getAdminArea() );
+                Log.d("address get",address.getLocality() );
+                //locate.put("admin", address.getAdminArea());
+                //locate.put("local", address.getLocality());
 
 
 			}catch(IOException e){
@@ -104,12 +113,15 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				Log.d("geocode", lat + "/" + lon);
                 Log.d("address get", address.getAdminArea() );
                 Log.d("address get",address.getLocality() );
+                locate.put("admin", address.getAdminArea());
+                locate.put("local", address.getLocality());
                 Log.d("address get",address.toString());
 			}catch(IOException e){
 				e.printStackTrace();
 			}
 		} else {
 			latlon.clear();
+            //locate.clear();
 			mLocationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
@@ -190,6 +202,9 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
                 Log.d("address get wifi", address.getLocality() );
                 Log.d("address get wifi", address.toString());
 
+                locate.put("admin", address.getAdminArea().toString());
+                locate.put("local", address.getLocality().toString());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -269,11 +284,16 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	private void judgeNeedOfUmb () {
 		if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
 			TextView tv1 = (TextView) v.findViewById(R.id.tv1);
-			HttpGetTask task = new HttpGetTask(activity, tv1, latlon);
-			task.execute();
+            HttpGetTask task = null;
+            try {
+                task = new HttpGetTask(activity, tv1, locate);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            task.execute();
 			Log.d("latlon", latlon.toString());
             //住所の取得
-            String address = getAddress(activity,latlon.get("lat"),latlon.get("lon"));
+            //String address = getAddress(activity,latlon.get("lat"),latlon.get("lon"));
             //Log.d("address", address);
            // Log.d("address", address.substring(11,address.length()-1));
 			audioPlay();
