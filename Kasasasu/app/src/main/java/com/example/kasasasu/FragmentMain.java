@@ -55,7 +55,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		latlon = new HashMap<>();
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on") && false) {
+		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
 			try{
@@ -70,13 +70,14 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lon", lon);
 				Log.d("geocode", lat + "/" + lon);
 
+
 			}catch(IOException e){
 				e.printStackTrace();
 			}
 		} else {
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-            Log.d("test","test");
+
 		}
 
 		sensorManager = (SensorManager)activity.getSystemService(activity.SENSOR_SERVICE);
@@ -101,6 +102,9 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				latlon.put("lon", lon);
 				settings.put("textSetting", "on");
 				Log.d("geocode", lat + "/" + lon);
+                Log.d("address get", address.getAdminArea() );
+                Log.d("address get",address.getLocality() );
+                Log.d("address get",address.toString());
 			}catch(IOException e){
 				e.printStackTrace();
 			}
@@ -140,8 +144,8 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
             }
         }
 
-        Log.d("address", result.toString());
-        return "";
+        //Log.d("address", result.toString());
+        return result.toString();
     }
 
 	@Override
@@ -169,7 +173,29 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	public void onLocationChanged(Location location){
 		if (! latlon.containsKey("lat")) latlon.put("lat", location.getLatitude());
 		if (! latlon.containsKey("lon")) latlon.put("lon", location.getLongitude());
-		if (latlon.containsKey("lat") && latlon.containsKey("lon"))mLocationManager.removeUpdates(this);
+		if (latlon.containsKey("lat") && latlon.containsKey("lon")){
+            Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+            List<Address> addressList = null;
+            try {
+                //addressList = geocoder.getFromLocation(latlon.get("lat"),latlon.get("lon"),1);
+                addressList = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                Address address = addressList.get(0);
+                //Log.d("test", "test");
+                Log.d("address get wifi", address.getAddressLine(1) );
+                Log.d("address get wifi", address.toString() );
+
+                addressList = geocoder.getFromLocationName(address.getAddressLine(1),1);
+                address = addressList.get(0);
+                Log.d("address get wifi", address.getAdminArea() );
+                Log.d("address get wifi", address.getLocality() );
+                Log.d("address get wifi", address.toString());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            mLocationManager.removeUpdates(this);
+        }
 	}
 
 	@Override
@@ -247,7 +273,9 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 			task.execute();
 			Log.d("latlon", latlon.toString());
             //住所の取得
-            getAddress(activity,latlon.get("lat"),latlon.get("lon"));
+            String address = getAddress(activity,latlon.get("lat"),latlon.get("lon"));
+            //Log.d("address", address);
+           // Log.d("address", address.substring(11,address.length()-1));
 			audioPlay();
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
