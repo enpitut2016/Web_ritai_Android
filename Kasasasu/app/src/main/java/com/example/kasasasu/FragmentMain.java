@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+
 public class FragmentMain extends Fragment implements LocationListener, View.OnClickListener, SensorEventListener {
 	private HashMap<String, Double> latlon;
     private HashMap<String, String> locate;

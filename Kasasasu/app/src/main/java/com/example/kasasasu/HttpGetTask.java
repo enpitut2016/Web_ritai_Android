@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 /**
  * Created by 真史 on 2016/04/23.
  */
@@ -26,12 +27,14 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 	private TextView mTextView;
 	private Activity mParentActivity;
 	private ProgressDialog mDialog = null;
-	public static final int CNT = 7;
+	public static final int CNT = 8;
 	public static final int RAIN_ID = 500;
     private String encodedString_admin;
     private String encodedString_local;
     private String encodedString_feature;
-
+    private String hour;
+    private String prob;
+    private String temperature;
 
 	private String mUri;
 
@@ -70,16 +73,16 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 	@Override
 	protected void onPostExecute(Integer weatherId){
 		mDialog.dismiss();
-		//if (weatherId.equals(new Integer(RAIN_ID))) {
-        if (false) {
+		if (weatherId.equals(RAIN_ID)) {
+        //if (false) {
 			this.mTextView.setText("傘が必要です。");
 		}
         else{
-            this.mTextView.setText("test");
+            this.mTextView.setText("傘は不必要です。");
         }
 	}
 
-	private Integer exec_get(){
+	private int exec_get(){
 		HttpURLConnection http = null;
 		InputStream in = null;
 		//String src ="";
@@ -102,38 +105,51 @@ public class HttpGetTask extends AsyncTask<Void, Void, Integer>{
 			JSONArray listArray = rootObj.getJSONArray("weathers");
             Log.d("json list" ,listArray.toString());
 
-			/*
+
             for (int i=0; i<CNT; i++) {
 				JSONObject obj = listArray.getJSONObject(i);
+
+                hour = obj.getString("hour");
+                prob = obj.getString("prob");
+                temperature = obj.getString("temperature");
+                Log.d("json result", "hour:"+hour+ " prob:"+prob+ " temperature:"+temperature);
+
+                if(Integer.parseInt(prob) > 50){
+                    return 500;
+                }
+
+
+
+
 				// 地点名
 				//String cityName = obj.getString("name");
 
 				// 気温(Kから℃に変換)
-				JSONObject mainObj = obj.getJSONObject("main");
-				//float currentTemp = (float) (mainObj.getDouble("temp") - 273.15f);
+				//JSONObject mainObj = obj.getJSONObject("main");
+				// currentTemp = (float) (mainObj.getDouble("temp") - 273.15f);
 				//float minTemp = (float) (mainObj.getDouble("temp_min") - 273.15f);
 				//float maxTemp = (float) (mainObj.getDouble("temp_max") - 273.15f);
 
 				// 湿度
-				if (mainObj.has("humidity")) {
-					int humidity = mainObj.getInt("humidity");
-				}
+				//if (mainObj.has("humidity")) {
+					//int humidity = mainObj.getInt("humidity");
+				//}
 
 				// 取得時間
 				//long time = obj.getLong("dt");
 
 				// 天気
-				JSONArray weatherArray = obj.getJSONArray("weather");
-				JSONObject weatherObj = weatherArray.getJSONObject(0);
-				String iconId = weatherObj.getString("icon");
+				//JSONArray weatherArray = obj.getJSONArray("weather");
+				//JSONObject weatherObj = weatherArray.getJSONObject(0);
+				//String iconId = weatherObj.getString("icon");
 				//weatherIds.add(new Integer(weatherObj.getInt("id")));
 
-				Integer weatherId = new Integer(weatherObj.getInt("id"));
+				//Integer weatherId = new Integer(weatherObj.getInt("id"));
 				//Log.d("time", obj.getString("dt_txt"));
-				if (weatherId == 500) {
-					return weatherId;
-				}
-			}*/
+				//if (weatherId == 500) {
+					//return weatherId;
+				//}
+			}
 
 		}catch (Exception e){
 			e.printStackTrace();
