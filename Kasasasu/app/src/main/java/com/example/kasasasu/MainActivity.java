@@ -25,24 +25,42 @@ import android.widget.Button;
 public class MainActivity extends FragmentActivity {
 
 	private ViewPager viewPager;
-
+	private int MY_PERMISSION_REQUEST_MULTI = 3;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 
+		//位置情報のアプリ権限が許可されていない場合は許可を促す
+		if (PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+				!= PackageManager.PERMISSION_GRANTED){
+			new AlertDialog.Builder(this)
+					.setTitle("アプリケーション権限について")
+					.setMessage("以下アプリ権限を許可してください" + "\n"
+							+ "・位置情報取得権限")
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@TargetApi(Build.VERSION_CODES.M)
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							//パーミッション許可取得
+							requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_MULTI);
+						}
+					})
+					.create().show();
+			return ;
+		}
+
 		ActionBar actionBar = getActionBar();
 		actionBar.setLogo(R.drawable.logo);
 		actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setDisplayUseLogoEnabled(true);
-
+		Log.d("Tag","test");
 		//MediaPlayerの音量調整を端末でできるようにする
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter( new KasasasuFragmentStatePagerAdapter( getSupportFragmentManager()));
-
 
 	}
 
@@ -69,4 +87,7 @@ public class MainActivity extends FragmentActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void permission(){
+
+	}
 }

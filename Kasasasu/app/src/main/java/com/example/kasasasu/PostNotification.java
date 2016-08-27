@@ -3,6 +3,12 @@ package com.example.kasasasu;
 /**
  * Created by shunpei on 16/08/27.
  */
+/**
+*androidの上部に通知を行うクラス
+ * サービスが行われている場合は通知される
+ * サービスが止まると通知も消える
+ */
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,7 +31,7 @@ public class PostNotification {
         builder.setContentIntent(pendingIntent);
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setContentTitle("かささす");
-        builder.setContentText("かささす　動作中");
+        builder.setContentText("かささす　作動中");
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
         builder.setTicker("new message");

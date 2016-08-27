@@ -39,14 +39,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class FragmentMain extends Fragment implements LocationListener, View.OnClickListener, SensorEventListener {
+public class FragmentMain extends Fragment {
+	/*
 	private HashMap<String, Double> latlon;
 	private LocationManager mLocationManager;
 	private KasasasuSQLiteOpenHelper DBHelper;
 	private HashMap<String, String> settings;
-	private View v;
+
 	private Button button;
-	private Activity activity;
+
 
 	private SensorManager sensorManager;
 	private double count;
@@ -55,38 +56,18 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	private Date lastDate = new Date(0);
 
 	private int MY_PERMISSION_REQUEST_MULTI = 3;
-
+	*/
+	private Activity activity;
+	private View v;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
 
-		button = (Button)v.findViewById(R.id.button);
-		button.setOnClickListener(this);
-
+		/*
 		latlon = new HashMap<>();
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-		Log.d("Start","start4");
-
-		if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
-				!= PackageManager.PERMISSION_GRANTED){
-			new AlertDialog.Builder(activity)
-					.setTitle("アプリケーション権限について")
-					.setMessage("以下アプリ権限を許可してください" + "\n"
-							+ "・位置情報取得権限")
-					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-						@TargetApi(Build.VERSION_CODES.M)
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-							//パーミッション許可取得
-							requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_MULTI);
-						}
-					})
-					.create()
-					.show();
-			return v;
-		}
 
 		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
@@ -105,13 +86,10 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				e.printStackTrace();
 			}
 		} else {
-
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
-
-		sensorManager = (SensorManager)activity.getSystemService(activity.SENSOR_SERVICE);
-		textView = (TextView) v.findViewById(R.id.tv2);
+		*/
 
 		Button startButton = (Button) v.findViewById(R.id.start_button);
 		startButton.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +100,6 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 			}
 
 		});
-
 
 		Button stopButton = (Button) v.findViewById(R.id.stop_button);
 		stopButton.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +114,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 
 		return v;
 	}
-
+/*
 	public void updateLatLon (boolean settingIsText, String strAddress) {
 		if (settingIsText) {
 			Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
@@ -164,26 +141,6 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
-		/*if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
-			TextView tv1 = (TextView) this.v.findViewById(R.id.tv1);
-			HttpGetTask task = new HttpGetTask(getActivity(), tv1, latlon);
-			task.execute();
-			Log.d("latlon", latlon.toString());
-		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
-			Toast.makeText(getActivity(), "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
-		} else {
-			Toast.makeText(getActivity(), "少し時間をおいて再度ボタンを押してください。", Toast.LENGTH_LONG).show();
-		}*/
-		Log.d("frag", "onclick");
-
-		List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION);
-		if(sensors.size() > 0) {
-			Sensor s = sensors.get(0);
-			sensorManager.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
-		}
-	}
 
 	@Override
 	public void onLocationChanged(Location location){
@@ -201,64 +158,6 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	@Override
 	public void onProviderDisabled(String s){}
 
-	@Override
-	public void onStop() {
-		super.onStop();
-
-		sensorManager.unregisterListener(this);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		/*List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION);
-		if(sensors.size() > 0) {
-			Sensor s = sensors.get(0);
-			sensorManager.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
-		}*/
-	}
-
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-	@Override
-	public void onSensorChanged(SensorEvent event) {
-		count = Math.sqrt(Math.pow( event.values[1],2) + Math.pow( event.values[2],2));
-		count = count * 100;
-		BigDecimal bd = new BigDecimal(count);
-		BigDecimal res = bd.setScale(3, BigDecimal.ROUND_HALF_UP);
-
-		String doubleString = Double.toString(res.doubleValue());
-		textView.setText(doubleString);
-
-		Date date = new Date();
-
-		if(count >= 5 && date.getTime() - lastDate.getTime() > 20000 ){
-			lastDate = new Date();
-			judgeNeedOfUmb();
-		}
-	}
-
-	private void audioPlay() {
-		mediaPlayer = new MediaPlayer();
-		String filePath = "rain.mp3";
-
-		try {
-			AssetFileDescriptor afdescripter = activity.getAssets().openFd(filePath);
-
-			mediaPlayer.setDataSource(afdescripter.getFileDescriptor(),
-					afdescripter.getStartOffset(),
-					afdescripter.getLength());
-
-			activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-			mediaPlayer.prepare();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		mediaPlayer.start();
-	}
 
 	private void judgeNeedOfUmb () {
 		if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
@@ -272,4 +171,6 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		}
 		Log.d("frag", "judgeNeedOfUmb");
 	}
+*/
+
 }

@@ -73,7 +73,7 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		cityEditText = (EditText)getActivity().findViewById(R.id.cityText);
 		DBHelper.add("prefecture", prefectureEditText.getText().toString());
 		DBHelper.add("city", cityEditText.getText().toString());
-		((FragmentMain)getTargetFragment()).updateLatLon(settingIsText, prefectureEditText.getText().toString() + cityEditText.getText().toString());
+		//((FragmentMain)getTargetFragment()).updateLatLon(settingIsText, prefectureEditText.getText().toString() + cityEditText.getText().toString());
 	}
 
 	@Override

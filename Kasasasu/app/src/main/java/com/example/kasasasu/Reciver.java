@@ -7,6 +7,11 @@ import android.content.Intent;
 /**
  * Created by shunpei on 16/08/26.
  */
+/**
+ *画面を呼び起こすためのレシーバーのクラス
+ *
+ */
+
 public class Reciver extends BroadcastReceiver {
 
     @Override
