@@ -268,7 +268,10 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
             }
             task.execute();
 			Log.d("latlon", latlon.toString());
-			audioPlay();
+            if(tv1.getText().equals("傘が必要です。")){
+                audioPlay();
+            }
+
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
 		}
