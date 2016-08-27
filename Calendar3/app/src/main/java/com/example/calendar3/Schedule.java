@@ -17,12 +17,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class Schedule extends AppCompatActivity implements View.OnClickListener {
-    Calendar calendar = Calendar.getInstance();
-    int month = calendar.get(Calendar.MONTH);
-    int year  = calendar.get(Calendar.YEAR);
+    private Calendar calendar = Calendar.getInstance();
+    private int month = calendar.get(Calendar.MONTH);
+    private int year  = calendar.get(Calendar.YEAR);
 
-    ArrayList<Integer> day = new ArrayList<Integer>();
-    ArrayList<TextView> textViews = new ArrayList<TextView>();
+    private ArrayList<Integer> day = new ArrayList<Integer>();
+    private ArrayList<TextView> textViews = new ArrayList<TextView>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +78,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener 
         day.add(R.id.friday6);
         day.add(R.id.saturday6);
 
-
-
-
         CreateCalendar();
-
 
         Button button1, button2;
 
@@ -90,41 +86,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener 
         button1.setOnClickListener(this);
 
         button2 = (Button) findViewById(R.id.beforeButton);
-        button2.setOnClickListener(this); /*{
-            @Override
-            public void onClick(View v) {
-                TextView tv;
-
-                month = month-1;
-                if(month == -1){
-                    month = 11;
-                    year--;
-                }
-                CreateCalendar();
-                Log.v("ボタン","押せたぞ");
-            }
-        });*/
-
-       /* tv = (TextView) findViewById(R.id.sunday5);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView tv;
-
-                month = month-1;
-                if(month == -1){
-                    month = 11;
-                    year--;
-                }
-                CreateCalendar();
-                Log.v("ボタン","押せたぞ");
-            }
-        });*/
-
-
-
-
-
+        button2.setOnClickListener(this);
     }
 
     //カレンダーを作成
