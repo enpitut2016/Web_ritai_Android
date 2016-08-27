@@ -1,93 +1,97 @@
 package com.example.kasasasu;
 
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Switch;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FragmentSetting extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
-
+public class FragmentSetting extends Fragment implements CompoundButton.OnCheckedChangeListener {
 	private View v;
-	private EditText prefectureEditText, cityEditText;
-	private Button saveButton;
-	private KasasasuSQLiteOpenHelper DBHelper;
-	private boolean swIsChecked;
+	private Activity activity;
 	private HashMap<String, String> settings;
+	private KasasasuSQLiteOpenHelper DBHelper;
 	private Switch switch1;
+	private boolean swIsChecked;
+	private ArrayList<Setting> settingArrayList;
+	private SettingAdapter adapter;
+	private String address;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		v = inflater.inflate(R.layout.fragment_setting, null);
-		prefectureEditText = (EditText)v.findViewById(R.id.prefecureText);
-		cityEditText = (EditText)v.findViewById(R.id.cityText);
+		//フラグメントのビューを取得
+		v = inflater.inflate(R.layout.fragment_setting2, null);
 
-		saveButton = (Button)v.findViewById(R.id.saveButton);
-		saveButton.setOnClickListener(this);
+		//MainActivityを取得
+		activity = getActivity();
 
 		switch1 = (Switch)v.findViewById(R.id.switch1);
 		switch1.setOnCheckedChangeListener(this);
 
+		//設定内容をDBから取得
 		DBHelper = new KasasasuSQLiteOpenHelper(getActivity());
 		settings = DBHelper.get();
-		Log.d("show", settings.toString());
-		if (settings.containsKey("prefecture")) prefectureEditText.setText(settings.get("prefecture"));
-		if (settings.containsKey("city")) cityEditText.setText(settings.get("city"));
 
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")){
-			//Log.d("show", settings.get("prefecture"));
-			switch1 = (Switch)v.findViewById(R.id.switch1);
+		//住所文字列を設定内容から取得
+		address = "";
+		if (settings.containsKey("prefecture")) address += settings.get("prefecture");
+		if (settings.containsKey("city")) address += settings.get("city");
+
+		//ListViewのアダプターを生成
+		settingArrayList = new ArrayList<>();
+		if (swIsChecked) settingArrayList.add(new Setting("地域", address));
+		adapter = new SettingAdapter(activity, settingArrayList);
+
+		// リストビューにアイテム (adapter) を追加
+		ListView listView1 = (ListView)v.findViewById(R.id.listView1);
+		listView1.setAdapter(adapter);
+
+		// アイテムクリック時ののイベントを追加
+		listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent,
+									View view, int pos, long id) {
+				// 選択アイテムを取得
+				ListView listView = (ListView)parent;
+				String item = ((Setting)listView.getItemAtPosition(pos)).getName();
+
+				switch (item) {
+					case "地域":
+						//スイッチが有効状態であれば住所選択画面へ
+						if (swIsChecked) {
+							Intent intent = new Intent(activity, AreaActivity.class);
+							startActivity(intent);
+						}
+						break;
+				}
+			}
+		});
+
+		//スイッチのオン・オフをDBから取得
+		if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
 			switch1.setChecked(true);
+			swIsChecked = true;
 		} else {
-			prefectureEditText.setFocusable(false);
-			prefectureEditText.setFocusableInTouchMode(false);
-			cityEditText.setFocusable(false);
-			cityEditText.setFocusableInTouchMode(false);
+			swIsChecked = false;
 		}
 		return v;
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-	}
-
-	@Override
-	public void onClick(View v) {
-		//Log.d("frag", "onclick");
-		boolean settingIsText = false;
-		String on_or_off = "off";
-		if (swIsChecked) {
-			settingIsText = true;
-			on_or_off = "on";
-		}
-		DBHelper.add("textSetting", on_or_off);
-
-		prefectureEditText = (EditText)getActivity().findViewById(R.id.prefecureText);
-		cityEditText = (EditText)getActivity().findViewById(R.id.cityText);
-		DBHelper.add("prefecture", prefectureEditText.getText().toString());
-		DBHelper.add("city", cityEditText.getText().toString());
-		((FragmentMain)getTargetFragment()).updateLatLon(settingIsText, prefectureEditText.getText().toString() + cityEditText.getText().toString());
-	}
-
-	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		if ((swIsChecked = isChecked) == true) {
-			prefectureEditText.setFocusable(true);
-			prefectureEditText.setFocusableInTouchMode(true);
-			cityEditText.setFocusable(true);
-			cityEditText.setFocusableInTouchMode(true);
-		} else {
-			prefectureEditText.setFocusable(false);
-			prefectureEditText.setFocusableInTouchMode(false);
-			cityEditText.setFocusable(false);
-			cityEditText.setFocusableInTouchMode(false);
-		}
+		swIsChecked = isChecked;
+		DBHelper.add("selfAreaSetting", String.valueOf(isChecked));
+
+		if (isChecked) adapter.add(new Setting("地域", address));
+		else adapter.delete("地域");
+		adapter.notifyDataSetChanged();
 	}
 }
