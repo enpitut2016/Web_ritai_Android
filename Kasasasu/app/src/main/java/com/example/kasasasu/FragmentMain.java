@@ -45,7 +45,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	private SensorManager sensorManager;
 	private double count;
 	private TextView textView;
-	private MediaPlayer mediaPlayer;
+
 	private Date lastDate = new Date(0);
 
 
@@ -61,7 +61,8 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
+        Log.d("settings", settings.toString());
+        if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
 			try{
@@ -237,25 +238,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 		}
 	}
 
-	private void audioPlay() {
-		mediaPlayer = new MediaPlayer();
-		String filePath = "rain.mp3";
 
-		try {
-			AssetFileDescriptor afdescripter = activity.getAssets().openFd(filePath);
-
-			mediaPlayer.setDataSource(afdescripter.getFileDescriptor(),
-					afdescripter.getStartOffset(),
-					afdescripter.getLength());
-
-			activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-			mediaPlayer.prepare();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		mediaPlayer.start();
-	}
 
 	private void judgeNeedOfUmb () {
 		if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
@@ -268,9 +251,9 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
             }
             task.execute();
 			Log.d("latlon", latlon.toString());
-            if(tv1.getText().equals("傘が必要です。")){
+            /*if(tv1.getText().equals("傘が必要です。")){
                 audioPlay();
-            }
+            }*/
 
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();

@@ -91,7 +91,11 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		DBHelper.add("selfAreaSetting", String.valueOf(isChecked));
 
 		if (isChecked) adapter.add(new Setting("地域", address));
-		else adapter.delete("地域");
+		else {
+            adapter.delete("地域");
+            ((FragmentMain)getTargetFragment()).updateLatLon(isChecked,address);
+        }
+
 		adapter.notifyDataSetChanged();
 	}
 }

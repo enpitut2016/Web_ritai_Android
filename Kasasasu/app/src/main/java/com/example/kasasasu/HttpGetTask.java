@@ -2,6 +2,9 @@ package com.example.kasasasu;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
@@ -10,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -37,6 +41,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
     private String hour;
     private String prob;
     private String temperature;
+    private MediaPlayer mediaPlayer;
 
 	private String mUri;
 
@@ -87,10 +92,12 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
             if (prob > RAIN_PROB) {
                 //if (false) {
                 this.mTextView.setText("傘が必要です。");
+                break;
             } else {
                 this.mTextView.setText("傘は不必要です。");
             }
         }
+        if(this.mTextView.getText().equals("傘が必要です。")) audioPlay();
 	}
 
 	private HashMap exec_get(){
@@ -128,41 +135,6 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
                 Log.d("json result", "hour:"+hour+ " prob:"+prob+ " temperature:"+temperature);
                 weather_results.put(hour,prob+"/"+temperature);
 
-                //if(Integer.parseInt(prob) > 50){
-                    //return 500;
-                //}
-
-
-
-
-				// 地点名
-				//String cityName = obj.getString("name");
-
-				// 気温(Kから℃に変換)
-				//JSONObject mainObj = obj.getJSONObject("main");
-				// currentTemp = (float) (mainObj.getDouble("temp") - 273.15f);
-				//float minTemp = (float) (mainObj.getDouble("temp_min") - 273.15f);
-				//float maxTemp = (float) (mainObj.getDouble("temp_max") - 273.15f);
-
-				// 湿度
-				//if (mainObj.has("humidity")) {
-					//int humidity = mainObj.getInt("humidity");
-				//}
-
-				// 取得時間
-				//long time = obj.getLong("dt");
-
-				// 天気
-				//JSONArray weatherArray = obj.getJSONArray("weather");
-				//JSONObject weatherObj = weatherArray.getJSONObject(0);
-				//String iconId = weatherObj.getString("icon");
-				//weatherIds.add(new Integer(weatherObj.getInt("id")));
-
-				//Integer weatherId = new Integer(weatherObj.getInt("id"));
-				//Log.d("time", obj.getString("dt_txt"));
-				//if (weatherId == 500) {
-					//return weatherId;
-				//}
 			}
 
 		}catch (Exception e){
@@ -181,4 +153,24 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 		}
 		return weather_results;
 	}
+
+    private void audioPlay() {
+        mediaPlayer = new MediaPlayer();
+        String filePath = "rain.mp3";
+
+        try {
+            AssetFileDescriptor afdescripter = mParentActivity.getAssets().openFd(filePath);
+
+            mediaPlayer.setDataSource(afdescripter.getFileDescriptor(),
+                    afdescripter.getStartOffset(),
+                    afdescripter.getLength());
+
+            mParentActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+            mediaPlayer.prepare();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        mediaPlayer.start();
+    }
 }
