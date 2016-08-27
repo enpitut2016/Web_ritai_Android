@@ -3,4 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">設定</string>
+    <string name="title_activity_area">AreaActivity</string>
+    <string name="title_activity_pref">PrefActivity</string>
+    <string name="title_activity_city">CityActivity</string>
 </resources>

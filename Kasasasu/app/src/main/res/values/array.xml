@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="prefecture">
+    <string-array name="area">
+        <item>北海道・東北</item>
+        <item>関東</item>
+        <item>北陸・甲信越</item>
+        <item>中部</item>
+        <item>近畿</item>
+        <item>中国</item>
+        <item>四国</item>
+        <item>九州・沖縄</item>
+    </string-array>
+
+    <string-array name="tohoku_prefecture">
         <item>北海道</item>
         <item>青森県</item>
         <item>岩手県</item>
@@ -8,6 +19,9 @@
         <item>秋田県</item>
         <item>山形県</item>
         <item>福島県</item>
+    </string-array>
+
+    <string-array name="kanto_prefecture">
         <item>茨城県</item>
         <item>栃木県</item>
         <item>群馬県</item>
@@ -15,15 +29,24 @@
         <item>千葉県</item>
         <item>東京都</item>
         <item>神奈川県</item>
+    </string-array>
+
+    <string-array name="hokurikukoshinetsu_prefecture">
         <item>新潟県</item>
         <item>富山県</item>
         <item>石川県</item>
         <item>福井県</item>
         <item>山梨県</item>
+    </string-array>
+
+    <string-array name="chubu_prefecture">
         <item>長野県</item>
         <item>岐阜県</item>
         <item>静岡県</item>
         <item>愛知県</item>
+    </string-array>
+
+    <string-array name="kinki_prefecture">
         <item>三重県</item>
         <item>滋賀県</item>
         <item>京都府</item>
@@ -31,15 +54,24 @@
         <item>兵庫県</item>
         <item>奈良県</item>
         <item>和歌山県</item>
+    </string-array>
+
+    <string-array name="chugoku_prefecture">
         <item>鳥取県</item>
         <item>島根県</item>
         <item>岡山県</item>
         <item>広島県</item>
         <item>山口県</item>
+    </string-array>
+
+    <string-array name="shikoku_prefecture">
         <item>徳島県</item>
         <item>香川県</item>
         <item>愛媛県</item>
         <item>高知県</item>
+    </string-array>
+
+    <string-array name="kyushu_prefecture">
         <item>福岡県</item>
         <item>佐賀県</item>
         <item>長崎県</item>
