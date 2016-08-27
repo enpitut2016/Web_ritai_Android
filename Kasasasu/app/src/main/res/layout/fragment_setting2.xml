@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/area"
+        android:layout_below = "@+id/switch1"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="位置情報を自分で設定する"
+        android:textSize="20sp"
+        android:id="@+id/switch1"
+        android:textOn="Wi-Fi"
+        android:textOff="自分で設定"
+        android:layout_centerHorizontal = "true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="50dp"
+        android:layout_weight="2.10"/>
+
+</RelativeLayout>
