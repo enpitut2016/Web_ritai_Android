@@ -73,6 +73,7 @@ public class SensorService extends Service implements SensorEventListener{
                 Date date = new Date();
                 if(count >= 5 && date.getTime() - lastDate.getTime() > 30000 ) {
                     Log.d("Tag", "double" + count);
+                    lastDate = new Date();
                       /*  Intent i = new Intent(getApplicationContext(), Reciver.class);
                         sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, 0);
                         calendar = Calendar.getInstance();
