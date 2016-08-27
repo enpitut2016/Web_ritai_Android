@@ -61,7 +61,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
+        if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 
 			try{
