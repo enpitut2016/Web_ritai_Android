@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.calendar3.MainActivity"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text=""
+        android:id="@+id/YearMonth"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        >
+
+        <Button
+            android:layout_width="14dp"
+            android:layout_height="200dp"
+            android:text="←"
+            android:id="@+id/beforeButton"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="日"
+                    android:id="@+id/sunday0"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="月"
+                    android:id="@+id/monday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="火"
+                    android:id="@+id/tuesday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="水"
+                    android:id="@+id/wednesday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="木"
+                    android:id="@+id/thursday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="金"
+                    android:id="@+id/friday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text="土"
+                    android:id="@+id/saturday0"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday1"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday2"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line" />
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday3"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday4"
+                    android:layout_weight="1"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday5"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/sunday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/monday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/tuesday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/wednesday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/thursday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/friday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+
+                <TextView
+                    android:layout_width="14dp"
+                    android:layout_height="62dp"
+                    android:text=""
+                    android:id="@+id/saturday6"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="@drawable/line"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="14dp"
+            android:layout_height="200dp"
+            android:text="→"
+            android:id="@+id/nextButton"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
