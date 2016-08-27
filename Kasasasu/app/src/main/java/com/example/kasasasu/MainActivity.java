@@ -1,28 +1,51 @@
 package com.example.kasasasu;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
 
 
 public class MainActivity extends FragmentActivity {
+
 	private ViewPager viewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+
 		ActionBar actionBar = getActionBar();
 		actionBar.setLogo(R.drawable.logo);
 		actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setDisplayUseLogoEnabled(true);
 
+		//MediaPlayerの音量調整を端末でできるようにする
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter( new KasasasuFragmentStatePagerAdapter( getSupportFragmentManager()));
+
+
 	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,4 +68,5 @@ public class MainActivity extends FragmentActivity {
 
 		return super.onOptionsItemSelected(item);
 	}
+
 }

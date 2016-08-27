@@ -1,6 +1,14 @@
 package com.example.kasasasu;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,8 +21,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,19 +54,42 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 	private MediaPlayer mediaPlayer;
 	private Date lastDate = new Date(0);
 
+	private int MY_PERMISSION_REQUEST_MULTI = 3;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
+
 		button = (Button)v.findViewById(R.id.button);
 		button.setOnClickListener(this);
 
 		latlon = new HashMap<>();
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
+		Log.d("Start","start4");
+
+		if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+				!= PackageManager.PERMISSION_GRANTED){
+			new AlertDialog.Builder(activity)
+					.setTitle("アプリケーション権限について")
+					.setMessage("以下アプリ権限を許可してください" + "\n"
+							+ "・位置情報取得権限")
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@TargetApi(Build.VERSION_CODES.M)
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							//パーミッション許可取得
+							requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_MULTI);
+						}
+					})
+					.create()
+					.show();
+			return v;
+		}
+
 		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
-
 			try{
 				List<Address> addressList = geocoder.getFromLocationName(settings.get("prefecture") + settings.get("city"), 1);
 				Address address = addressList.get(0);
@@ -72,12 +105,35 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 				e.printStackTrace();
 			}
 		} else {
+
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
 
 		sensorManager = (SensorManager)activity.getSystemService(activity.SENSOR_SERVICE);
 		textView = (TextView) v.findViewById(R.id.tv2);
+
+		Button startButton = (Button) v.findViewById(R.id.start_button);
+		startButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				activity.startService( new Intent( activity, SensorService.class ) );
+			}
+
+		});
+
+
+		Button stopButton = (Button) v.findViewById(R.id.stop_button);
+		stopButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				activity.stopService( new Intent( activity, SensorService.class ) );
+				NotificationManager mNotificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+				mNotificationManager.cancel(0);
+			}
+		});
 
 		return v;
 	}
@@ -210,7 +266,7 @@ public class FragmentMain extends Fragment implements LocationListener, View.OnC
 			HttpGetTask task = new HttpGetTask(activity, tv1, latlon);
 			task.execute();
 			Log.d("latlon", latlon.toString());
-			audioPlay();
+			//audioPlay();
 		} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
 			Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
 		}
