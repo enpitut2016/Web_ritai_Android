@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,12 +24,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,10 +62,22 @@ public class FragmentMain extends Fragment {
 	*/
 	private Activity activity;
 	private View v;
+
+	private PowerManager.WakeLock wakeLock;
+	private KeyguardManager.KeyguardLock keyguardLock;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
+
+		Log.d("Tag","FragmentMain");
+
+		activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+				WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
 		/*
 		latlon = new HashMap<>();

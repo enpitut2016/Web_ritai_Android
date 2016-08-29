@@ -150,7 +150,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
         // インタンスを生成
         mediaPlayer = new MediaPlayer();
         //音楽ファイル名, あるいはパス
-        String filePath = "rain.mp3";
+        String filePath = "assets/puyue.mp3";
         try {
             // assetsから mp3 ファイルを読み込み
             AssetFileDescriptor afdescripter = getAssets().openFd(filePath);
@@ -185,31 +185,34 @@ public class SensorService extends Service implements SensorEventListener, Locat
         //現在の時間を保存する
         Date date = new Date();
         //count：閾値　センサ値が閾値以上かつ最後の通知から30秒後にはいるループ
-        if(count >= 5 && date.getTime() - lastDate.getTime() > 30000 ) {
+        if(count >= 5 && date.getTime() - lastDate.getTime() > 10000 ) {
             Log.d("Tag", "double" + count);
             //音声を流した時間を取得しておく
             lastDate = new Date();
-                      /*  Intent i = new Intent(getApplicationContext(), Reciver.class);
+                        Intent i = new Intent(getApplicationContext(), Reciver.class);
                         sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, 0);
+
                         calendar = Calendar.getInstance();
                         calendar.setTimeInMillis(System.currentTimeMillis());
-                        int year = calendar.get(Calendar.YEAR);
-                        int month = calendar.get(Calendar.MONTH);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int hour = calendar.get(Calendar.HOUR);
-                        int minute = calendar.get(Calendar.MINUTE);
-                        //現在時刻をセット
-                        //calendar.set(year, month, day, hour, minute);
-                        calendar.set(year, month, day, hour,minute);
                         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-                        String tmp = "Calendar: " + calendar.get(Calendar.YEAR) + "/"
-                                + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE)
+
+/*                        String tmp = "Calendar: " + calendar.get(Calendar.YEAR) + "/"
+                                + (calendar.get(Calendar.MONTH)) + "/" + calendar.get(Calendar.DATE)
                                 + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":"
                                 + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
+
                         Log.d("Tag",tmp);*/
 
+            //judgeNeedOfUmb();
             //音声再生メソッド
+
+            /*
+            try{
+                Thread.sleep(5000);
+        }catch(Exception e){}
+        */
+
             audioPlay();
         }
     }
@@ -220,6 +223,8 @@ public class SensorService extends Service implements SensorEventListener, Locat
             HttpGetTask task = new HttpGetTask(activity, tv1, latlon);
             task.execute();
             Log.d("latlon", latlon.toString());
+            if(tv1.getText().equals("傘が必要です。"))
+                audioPlay();
         } else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
             Toast.makeText(activity, "位置設定を正しく入力してください。", Toast.LENGTH_LONG).show();
         }
