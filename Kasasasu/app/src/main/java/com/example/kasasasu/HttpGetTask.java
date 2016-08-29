@@ -28,11 +28,12 @@ import java.util.HashMap;
  * Created by 真史 on 2016/04/23.
  */
 public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
-	private TextView mTextView;
+	//private TextView mTextView;
+	private JSONObject jsonObject;
 	private Activity mParentActivity;
 	private ProgressDialog mDialog = null;
 	public static final int CNT = 8;
-	public static final int RAIN_PROB = 50;
+	//public static final int RAIN_PROB = 50;
     private String encodedString_admin;
     private String encodedString_local;
     private String encodedString_feature;
@@ -45,9 +46,10 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 
 	private String mUri;
 
-	public HttpGetTask(Activity parentActivity, TextView textView, HashMap<String, String> location) throws UnsupportedEncodingException {
+	public HttpGetTask(Activity parentActivity, HashMap<String, String> weather_results, HashMap<String, String> location) throws UnsupportedEncodingException {
 		mParentActivity = parentActivity;
-		mTextView = textView;
+		//mTextView = textView;
+		this.weather_results = weather_results;
 
 
         try {
@@ -83,7 +85,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
         mDialog.dismiss();
 
         Log.d("size", String.valueOf(weather_results.size()));
-        for (String key : weather_results.keySet()) {
+       /* for (String key : weather_results.keySet()) {
             String str = weather_results.get(key);
             int prob = Integer.parseInt(String.valueOf(str.split("/")[0]));
             double temperature = Double.parseDouble(String.valueOf(str.split("/")[1]));
@@ -91,20 +93,20 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 
             if (prob > RAIN_PROB) {
                 //if (false) {
-                this.mTextView.setText("傘が必要です。");
+                //this.mTextView.setText("傘が必要です。");
                 break;
             } else {
-                this.mTextView.setText("傘は不必要です。");
+                //this.mTextView.setText("傘は不必要です。");
             }
-        }
-        if(this.mTextView.getText().equals("傘が必要です。")) audioPlay();
+        }*/
+        //if(this.mTextView.getText().equals("傘が必要です。")) audioPlay();
 	}
 
 	private HashMap exec_get(){
 		HttpURLConnection http = null;
 		InputStream in = null;
 
-        weather_results = new HashMap<>();
+        //weather_results = new HashMap<>();
 		//String src ="";
 		//ArrayList<Integer> weatherIds = new ArrayList<>();
 		try{
@@ -154,7 +156,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 		return weather_results;
 	}
 
-    private void audioPlay() {
+   /* private void audioPlay() {
         mediaPlayer = new MediaPlayer();
         String filePath = "rain.mp3";
 
@@ -172,5 +174,5 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
         }
 
         mediaPlayer.start();
-    }
+    }*/
 }
