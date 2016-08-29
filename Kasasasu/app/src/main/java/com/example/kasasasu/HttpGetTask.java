@@ -97,7 +97,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
                 this.mTextView.setText("傘は不必要です。");
             }
         }
-        if(this.mTextView.getText().equals("傘が必要です。")) audioPlay();
+        //if(this.mTextView.getText().equals("傘が必要です。")) audioPlay();
 	}
 
 	private HashMap exec_get(){
@@ -154,7 +154,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 		return weather_results;
 	}
 
-    private void audioPlay() {
+    /*private void audioPlay() {
         mediaPlayer = new MediaPlayer();
         String filePath = "rain.mp3";
 
@@ -172,5 +172,5 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
         }
 
         mediaPlayer.start();
-    }
+    }*/
 }

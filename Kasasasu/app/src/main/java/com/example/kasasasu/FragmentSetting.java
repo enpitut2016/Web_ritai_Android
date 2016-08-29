@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 
 		//MainActivityを取得
 		activity = getActivity();
+        Log.d("activity",activity.toString());
 
 		switch1 = (Switch)v.findViewById(R.id.switch1);
 		switch1.setOnCheckedChangeListener(this);
@@ -90,11 +92,20 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		swIsChecked = isChecked;
 		DBHelper.add("selfAreaSetting", String.valueOf(isChecked));
 
+//<<<<<<< HEAD
 		if (isChecked) adapter.add(new Setting("地域", address));
 		else {
             adapter.delete("地域");
-            ((FragmentMain)getTargetFragment()).updateLatLon(isChecked,address);
+            //((FragmentMain)getTargetFragment()).updateLatLon(isChecked,address);
         }
+/*=======
+		prefectureEditText = (EditText)getActivity().findViewById(R.id.prefecureText);
+		cityEditText = (EditText)getActivity().findViewById(R.id.cityText);
+		DBHelper.add("prefecture", prefectureEditText.getText().toString());
+		DBHelper.add("city", cityEditText.getText().toString());
+		//((FragmentMain)getTargetFragment()).updateLatLon(settingIsText, prefectureEditText.getText().toString() + cityEditText.getText().toString());
+	}
+>>>>>>> origin/shunpei*/
 
 		adapter.notifyDataSetChanged();
 	}
