@@ -24,6 +24,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -53,6 +54,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     Timer timer;
     private Activity activity;
     private View v;
+    private boolean rainFlag = false;
 
     private HashMap<String, Double> latlon;
     private HashMap<String, String> locate;
@@ -66,6 +68,11 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private Calendar calendar;
     private Context context;
 
+    private HashMap<String, String> weather_results;
+    public static final int RAIN_PROB = 10;
+    //private MediaPlayer mediaPlayer;
+    Handler handler= new Handler();
+
     @Override
     public Context getApplicationContext() {
         return super.getApplicationContext();
@@ -77,8 +84,10 @@ public class SensorService extends Service implements SensorEventListener, Locat
     @Override
     public void onCreate(){
         super.onCreate();
+        //audioPlay();
         activity = getActivity();
         context = getApplicationContext();
+        DBHelper = new KasasasuSQLiteOpenHelper(this);
         //Log.d("activity",activity.toString());
         //サービス化開始の際にタブレット上部に通知を行うPostnotificationクラスのインスタンスを生成
         PostNotification send = new PostNotification(this);
@@ -95,8 +104,10 @@ public class SensorService extends Service implements SensorEventListener, Locat
         }
 
 
-        latlon = new HashMap<>();
+        /*latlon = new HashMap<>();
         locate = new HashMap<>();
+        weather_results = new HashMap<>();
+
         DBHelper = new KasasasuSQLiteOpenHelper(this);
         settings = DBHelper.get();
 
@@ -128,7 +139,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
-        }
+        }*/
 
 
     }
@@ -171,7 +182,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
         // インタンスを生成
         mediaPlayer = new MediaPlayer();
         //音楽ファイル名, あるいはパス
-        String filePath = "assets/puyue.mp3";
+        String filePath = "rain.mp3";
         try {
             // assetsから mp3 ファイルを読み込み
             AssetFileDescriptor afdescripter = getAssets().openFd(filePath);
@@ -208,15 +219,30 @@ public class SensorService extends Service implements SensorEventListener, Locat
         //count：閾値　センサ値が閾値以上かつ最後の通知から30秒後にはいるループ
         if(count >= 5 && date.getTime() - lastDate.getTime() > 10000 ) {
             Log.d("Tag", "double" + count);
+            //judgeNeedOfUmb();
+            boolean need;
+            need = Boolean.valueOf(DBHelper.get().get("need"));
+            //if(need) audioPlay();
+            if(DBHelper.get().get("need").equals("true")) audioPlay();
+            else Log.d("false", "false");
+
             //音声を流した時間を取得しておく
             lastDate = new Date();
                         Intent i = new Intent(getApplicationContext(), Reciver.class);
-                        sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, 0);
+                        i.putExtra("need",need);
+                        //i.putExtra("weather_results",weather_results);
+                        Log.d("sensor need", String.valueOf(rainFlag));
+                        //Log.d("sensor Hash", weather_results.toString());
+
+                        sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
                         calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        //calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.setTimeInMillis(0);
                         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+            sensorManager.unregisterListener(this);
+            stopSelf();
 
 /*                        String tmp = "Calendar: " + calendar.get(Calendar.YEAR) + "/"
                                 + (calendar.get(Calendar.MONTH)) + "/" + calendar.get(Calendar.DATE)
@@ -225,7 +251,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
 
                         Log.d("Tag",tmp);*/
 
-            //judgeNeedOfUmb();
+
             //音声再生メソッド
 
             /*
@@ -234,21 +260,61 @@ public class SensorService extends Service implements SensorEventListener, Locat
         }catch(Exception e){}
         */
 
-            audioPlay();
+           // audioPlay();
         }
     }
 
     private void judgeNeedOfUmb () {
         if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
-            TextView tv1 = (TextView) v.findViewById(R.id.tv1);
+            //TextView tv1 = (TextView) v.findViewById(R.id.tv1);
             HttpGetTask task = null;
             try {
-                task = new HttpGetTask(activity, tv1, locate);
+                task = new HttpGetTask(null, weather_results, locate);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             task.execute();
             Log.d("latlon", latlon.toString());
+
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    while (! weather_results.containsKey("finished")) {}
+                    rainFlag = false;
+                    for (String key : weather_results.keySet()) {
+                        String str = weather_results.get(key);
+                        int prob = Integer.parseInt(String.valueOf(str.split("/")[0]));
+                        double temperature = Double.parseDouble(String.valueOf(str.split("/")[1]));
+                        Log.d("split test", str.split(" / ")[0]);
+
+                        if (prob > RAIN_PROB) {
+                            rainFlag = true;
+                            audioPlay();
+                            break;
+                        }
+                    }
+                    weather_results.remove("finished");
+
+                   /* handler.post(new Runnable() {
+                        private boolean rainFlag;
+
+                        public Runnable setRainFlag(boolean rainFlag) {
+                            this.rainFlag = rainFlag;
+                            return this;
+                        }
+                        @Override
+                        public void run() {
+                            if (rainFlag) {
+                                tv1.setText("傘が必要です。");
+                                audioPlay();
+                            } else {
+                                tv1.setText("傘は不必要です。");
+                            }
+                        }
+                    }.setRainFlag(rainFlag));*/
+                }
+            }).start();
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.kasasasu;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Intent;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
@@ -88,7 +89,19 @@ public class MainActivity extends FragmentActivity {
 			viewPager.setCurrentItem(fragment);
 		}
 =======*/
-		viewPager.setAdapter( new KasasasuFragmentStatePagerAdapter( getSupportFragmentManager()));
+        KasasasuFragmentStatePagerAdapter kasasasuFragmentStatePagerAdapter =  new KasasasuFragmentStatePagerAdapter(getSupportFragmentManager());
+		viewPager.setAdapter(kasasasuFragmentStatePagerAdapter);
+        Intent intent = getIntent();
+        if(intent != null){
+            int fragment;
+            fragment = intent.getIntExtra("fragment", 0);
+            viewPager.setCurrentItem(fragment);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("need", intent.getBooleanExtra("need",false));
+            bundle.putSerializable("weather_results", intent.getSerializableExtra("weather_results"));
+            ((FragmentMain)(kasasasuFragmentStatePagerAdapter.getItem(0))).setArguments(bundle);
+
+        }
 
 		wakeLock.release();
 //>>>>>>> origin/shunpei

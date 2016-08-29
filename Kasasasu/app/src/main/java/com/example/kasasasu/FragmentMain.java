@@ -26,6 +26,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
@@ -44,20 +45,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-/*<<<<<<< HEAD
 
-public class FragmentMain extends Fragment implements LocationListener, View.OnClickListener, SensorEventListener {
-=======*/
-public class FragmentMain extends Fragment {
+public class FragmentMain extends Fragment implements LocationListener/* View.OnClickListener, SensorEventListener*/ {
+//public class FragmentMain extends Fragment {
 
 //>>>>>>> origin/shunpei
 	private HashMap<String, Double> latlon;
     private HashMap<String, String> locate;
+    private HashMap<String, String> weather_results;
+    private boolean rainFlag = false;
 	private LocationManager mLocationManager;
 	private KasasasuSQLiteOpenHelper DBHelper;
 	private HashMap<String, String> settings;
 
 	private Button button;
+
+    public static int flag = 0;
 
 
 	private SensorManager sensorManager;
@@ -66,6 +69,7 @@ public class FragmentMain extends Fragment {
 
 	private Date lastDate = new Date(0);
 
+//<<<<<<< HEAD
 //<<<<<<< HEAD
 //=======
 	private int MY_PERMISSION_REQUEST_MULTI = 3;
@@ -76,11 +80,35 @@ public class FragmentMain extends Fragment {
 	private PowerManager.WakeLock wakeLock;
 	private KeyguardManager.KeyguardLock keyguardLock;
 //>>>>>>> origin/shunpei
+//=======
+
+	public static final int RAIN_PROB = 10;
+	Handler handler= new Handler();
+
+    //private boolean flag;
+
+//>>>>>>> MVP
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
+        flag = false;
+
+        boolean need = getArguments().getBoolean("need");
+        //HashMap<String, String> weather_results = (HashMap)(getArguments().getSerializable("weather_results"));
+        weather_results = new HashMap<>();
+        if (need){
+            Log.d("need", "need");
+            TextView v1 = (TextView) v.findViewById(R.id.tv1);
+            v1.setText("傘が必要です。");
+        }
+
+        /*if(!(settings == null || weather_results.size() == 0)){
+            Log.d("weather Hash", weather_results.toString());
+            TextView v2 = (TextView) v.findViewById(R.id.tv2);
+            v2.setText(weather_results.toString());
+        }*/
 
 		Log.d("Tag","FragmentMain");
 
@@ -90,19 +118,15 @@ public class FragmentMain extends Fragment {
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-		/*
+
 		latlon = new HashMap<>();
         locate = new HashMap<>();
 
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
 		settings = DBHelper.get();
-<<<<<<< HEAD
+
         Log.d("settings", settings.toString());
         if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
-=======
-
-		if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
->>>>>>> origin/shunpei
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 			try{
 				List<Address> addressList = geocoder.getFromLocationName(settings.get("prefecture") + settings.get("city"), 1);
@@ -121,6 +145,11 @@ public class FragmentMain extends Fragment {
                 locate.put("admin", address.getAdminArea());
                 locate.put("local", address.getLocality());
                 locate.put("feature", address.getFeatureName());
+
+                judgeNeedOfUmb();
+                /*DBHelper.add("admin",locate.get("admin"));
+                DBHelper.add("local",locate.get("local"));
+                DBHelper.add("feature",locate.get("feature"));*/
                 //locate.put("admin", address.getAdminArea());
                 //locate.put("local", address.getLocality());
 
@@ -132,14 +161,16 @@ public class FragmentMain extends Fragment {
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
+
 		}
-		*/
+
 
 		Button startButton = (Button) v.findViewById(R.id.start_button);
 		startButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+                flag += 1;
 				activity.startService( new Intent( activity, SensorService.class ) );
 			}
 
@@ -153,11 +184,61 @@ public class FragmentMain extends Fragment {
 				activity.stopService( new Intent( activity, SensorService.class ) );
 				NotificationManager mNotificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
 				mNotificationManager.cancel(0);
+                flag = 0;
 			}
 		});
 
+
+
 		return v;
 	}
+
+    @Override
+    public void onLocationChanged(Location location){
+        if (! latlon.containsKey("lat")) latlon.put("lat", location.getLatitude());
+        if (! latlon.containsKey("lon")) latlon.put("lon", location.getLongitude());
+        //if (latlon.containsKey("lat") && latlon.containsKey("lon"))mLocationManager.removeUpdates(this);
+        if (latlon.containsKey("lat") && latlon.containsKey("lon")){
+            Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+            List<Address> addressList = null;
+            try {
+                //addressList = geocoder.getFromLocation(latlon.get("lat"),latlon.get("lon"),1);
+                addressList = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                Address address = addressList.get(0);
+                //Log.d("test", "test");
+                Log.d("address get wifi", address.getAddressLine(1) );
+                Log.d("address get wifi", address.toString() );
+                addressList = geocoder.getFromLocationName(address.getAddressLine(1),1);
+                address = addressList.get(0);
+                Log.d("address get wifi", address.getAdminArea() );
+                Log.d("address get wifi", address.getLocality() );
+                Log.d("address get wifi", address.getFeatureName());
+
+                locate.put("admin", address.getAdminArea());
+                locate.put("local", address.getLocality());
+                locate.put("feature", address.getFeatureName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mLocationManager.removeUpdates(this);
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
 /*
 	public void updateLatLon (boolean settingIsText, String strAddress) {
 		if (settingIsText) {
@@ -277,27 +358,37 @@ public class FragmentMain extends Fragment {
 		}
 	}
 
+<<<<<<< HEAD
 
 //=======
 //>>>>>>> origin/shunpei
 
+=======
+>>>>>>> MVP
 	private void judgeNeedOfUmb () {
 		if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
-			TextView tv1 = (TextView) v.findViewById(R.id.tv1);
+			final TextView tv1 = (TextView) v.findViewById(R.id.tv1);
             HttpGetTask task = null;
             try {
-                task = new HttpGetTask(activity, tv1, locate);
+                task = new HttpGetTask(activity, weather_results, locate);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             task.execute();
+			Log.d ("results", weather_results.toString());
 			Log.d("latlon", latlon.toString());
+<<<<<<< HEAD
 /*<<<<<<< HEAD
             /*if(tv1.getText().equals("傘が必要です。")){
                 audioPlay();
             }
+=======*/
 
-=======
+
+
+//>>>>>>> MVP
+
+/*=======
 			//audioPlay();
 >>>>>>> origin/shunpei*/
 		/*} else if (settings.containsKey("textSetting") && settings.get("textSetting").equals("on")) {
@@ -305,6 +396,73 @@ public class FragmentMain extends Fragment {
 		}
 		Log.d("frag", "judgeNeedOfUmb");
 	}*/
+
+    private void judgeNeedOfUmb () {
+        if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
+            //TextView tv1 = (TextView) v.findViewById(R.id.tv1);
+            HttpGetTask task = null;
+            try {
+                task = new HttpGetTask(activity, weather_results, locate);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            task.execute();
+            Log.d("latlon", latlon.toString());
+
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    while (! weather_results.containsKey("finished")) {}
+                    rainFlag = false;
+                    settings = DBHelper.get();
+                    for (String key : settings.keySet()) {
+                        if(key.matches("^[0-9]{2}")){
+                            String str = settings.get(key);
+
+                            int prob = Integer.parseInt(String.valueOf(str.split("/")[0]));
+                            double temperature = Double.parseDouble(String.valueOf(str.split("/")[1]));
+                            Log.d("split test", str.split(" / ")[0]);
+
+                            if (prob > RAIN_PROB) {
+                                rainFlag = true;
+                                break;
+
+                            }
+                        }
+                    }
+                    DBHelper.add("need",String.valueOf(rainFlag));
+                    Log.d("main flag", String.valueOf(rainFlag));
+                    weather_results.remove("finished");
+
+                   /* handler.post(new Runnable() {
+                        private boolean rainFlag;
+
+                        public Runnable setRainFlag(boolean rainFlag) {
+                            this.rainFlag = rainFlag;
+                            return this;
+                        }
+                        @Override
+                        public void run() {
+                            if (rainFlag) {
+                                tv1.setText("傘が必要です。");
+                                audioPlay();
+                            } else {
+                                tv1.setText("傘は不必要です。");
+                            }
+                        }
+                    }.setRainFlag(rainFlag));*/
+                }
+            }).start();
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if (flag == 2)activity.startService( new Intent( activity, SensorService.class ) );
+        /*flag=false;*/
+    }
 
 
 }
