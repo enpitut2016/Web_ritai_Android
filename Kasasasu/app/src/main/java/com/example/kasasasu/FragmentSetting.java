@@ -96,8 +96,10 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		if (isChecked) adapter.add(new Setting("地域", address));
 		else {
             adapter.delete("地域");
+
             //((FragmentMain)getTargetFragment()).updateLatLon(isChecked,address);
         }
+		((FragmentMain)(((MainActivity)activity).getKasasasuFragmentStatePagerAdapter().getItem(0))).updateLatLon(isChecked);
 /*=======
 		prefectureEditText = (EditText)getActivity().findViewById(R.id.prefecureText);
 		cityEditText = (EditText)getActivity().findViewById(R.id.cityText);

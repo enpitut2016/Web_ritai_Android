@@ -25,6 +25,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.Serializable;
+
 
 public class MainActivity extends FragmentActivity {
 
@@ -32,6 +34,8 @@ public class MainActivity extends FragmentActivity {
 	private int MY_PERMISSION_REQUEST_MULTI = 3;
 	private PowerManager.WakeLock wakeLock;
 	private KeyguardManager.KeyguardLock keyguardLock;
+
+	private KasasasuFragmentStatePagerAdapter kasasasuFragmentStatePagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +93,7 @@ public class MainActivity extends FragmentActivity {
 			viewPager.setCurrentItem(fragment);
 		}
 =======*/
-        KasasasuFragmentStatePagerAdapter kasasasuFragmentStatePagerAdapter =  new KasasasuFragmentStatePagerAdapter(getSupportFragmentManager());
+       kasasasuFragmentStatePagerAdapter =  new KasasasuFragmentStatePagerAdapter(getSupportFragmentManager());
 		viewPager.setAdapter(kasasasuFragmentStatePagerAdapter);
         Intent intent = getIntent();
         if(intent != null){
@@ -98,7 +102,10 @@ public class MainActivity extends FragmentActivity {
             viewPager.setCurrentItem(fragment);
             Bundle bundle = new Bundle();
             bundle.putBoolean("need", intent.getBooleanExtra("need",false));
-            bundle.putSerializable("weather_results", intent.getSerializableExtra("weather_results"));
+			if (intent.getIntExtra("flag", 0) != 0) {
+				//bundle.putSerializable("weather_results", intent.getSerializableExtra("weather_results"));
+				bundle.putInt("flag", 1);
+			}
             ((FragmentMain)(kasasasuFragmentStatePagerAdapter.getItem(0))).setArguments(bundle);
 
         }
@@ -132,5 +139,9 @@ public class MainActivity extends FragmentActivity {
 
 	public void permission(){
 
+	}
+
+	public KasasasuFragmentStatePagerAdapter getKasasasuFragmentStatePagerAdapter() {
+		return kasasasuFragmentStatePagerAdapter;
 	}
 }

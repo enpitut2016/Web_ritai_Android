@@ -60,9 +60,6 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 
 	private Button button;
 
-    public static int flag = 0;
-
-
 	private SensorManager sensorManager;
 	private double count;
 	private TextView textView;
@@ -85,7 +82,7 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 	public static final int RAIN_PROB = 10;
 	Handler handler= new Handler();
 
-    //private boolean flag;
+    private boolean flag;
 
 //>>>>>>> MVP
 
@@ -93,16 +90,19 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
-        flag = false;
 
         boolean need = getArguments().getBoolean("need");
         //HashMap<String, String> weather_results = (HashMap)(getArguments().getSerializable("weather_results"));
-        weather_results = new HashMap<>();
+		weather_results = new HashMap<>();
         if (need){
             Log.d("need", "need");
             TextView v1 = (TextView) v.findViewById(R.id.tv1);
             v1.setText("傘が必要です。");
         }
+
+		if ( getArguments().getInt("flag", 0) != 0) flag = true;
+		else flag = false;
+		Log.d("argument flag", String.valueOf(getArguments().getInt("flag", 0)));
 
         /*if(!(settings == null || weather_results.size() == 0)){
             Log.d("weather Hash", weather_results.toString());
@@ -160,8 +160,6 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 		} else {
 			mLocationManager = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
-
 		}
 
 
@@ -170,8 +168,7 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 
 			@Override
 			public void onClick(View v) {
-                flag += 1;
-				activity.startService( new Intent( activity, SensorService.class ) );
+                activity.startService( new Intent( activity, SensorService.class ) );
 			}
 
 		});
@@ -180,11 +177,10 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 		stopButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				flag = false;
 				activity.stopService( new Intent( activity, SensorService.class ) );
 				NotificationManager mNotificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
 				mNotificationManager.cancel(0);
-                flag = 0;
 			}
 		});
 
@@ -217,6 +213,9 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
                 locate.put("admin", address.getAdminArea());
                 locate.put("local", address.getLocality());
                 locate.put("feature", address.getFeatureName());
+				/*DBHelper.add("admin", address.getAdminArea());
+				DBHelper.add("local", address.getLocality());
+				DBHelper.add("feature", address.getFeatureName());*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -239,13 +238,13 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 
     }
 
-/*
-	public void updateLatLon (boolean settingIsText, String strAddress) {
+	public void updateLatLon (boolean settingIsText) {
 		if (settingIsText) {
 			Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
 
 			try{
-				List<Address> addressList = geocoder.getFromLocationName(strAddress, 1);
+				HashMap<String, String> DBData = DBHelper.get();
+				List<Address> addressList = geocoder.getFromLocationName(DBData.get("prefecture") + DBData.get("city"), 1);
 				Address address = addressList.get(0);
 
 				double lat;
@@ -276,7 +275,7 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
 	}
 
 
-	@Override
+	/*@Override
 	public void onLocationChanged(Location location){
 		if (! latlon.containsKey("lat")) latlon.put("lat", location.getLatitude());
 		if (! latlon.containsKey("lon")) latlon.put("lon", location.getLongitude());
@@ -457,12 +456,13 @@ public class FragmentMain extends Fragment implements LocationListener/* View.On
         }
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        if (flag == 2)activity.startService( new Intent( activity, SensorService.class ) );
-        /*flag=false;*/
-    }
-
+	@Override
+	public void onDestroy() {
+		if (flag) {
+			activity.startService(new Intent(activity, SensorService.class));
+			Log.d("ondestroy", "ondestroy");
+		}
+		super.onDestroy();
+	}
 
 }

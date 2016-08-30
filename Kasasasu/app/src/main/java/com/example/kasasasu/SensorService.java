@@ -159,7 +159,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+		return null;
     }
 
     @Override
@@ -230,6 +230,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
             lastDate = new Date();
                         Intent i = new Intent(getApplicationContext(), Reciver.class);
                         i.putExtra("need",need);
+
                         //i.putExtra("weather_results",weather_results);
                         Log.d("sensor need", String.valueOf(rainFlag));
                         //Log.d("sensor Hash", weather_results.toString());
@@ -241,7 +242,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
                         calendar.setTimeInMillis(0);
                         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-            sensorManager.unregisterListener(this);
+            //sensorManager.unregisterListener(this);
             stopSelf();
 
 /*                        String tmp = "Calendar: " + calendar.get(Calendar.YEAR) + "/"

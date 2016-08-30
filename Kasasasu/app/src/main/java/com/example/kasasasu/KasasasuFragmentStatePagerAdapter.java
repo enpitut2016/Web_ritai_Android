@@ -13,7 +13,7 @@ public class KasasasuFragmentStatePagerAdapter extends FragmentStatePagerAdapter
 
 		fragmentMain = new FragmentMain();
 		fragmentSetting = new FragmentSetting();
-		fragmentSetting.setTargetFragment(fragmentMain, 0);
+		//fragmentSetting.setTargetFragment(fragmentMain, 0);
 	}
 
 	@Override public Fragment getItem(int i) {

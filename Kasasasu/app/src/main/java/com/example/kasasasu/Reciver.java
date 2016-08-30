@@ -25,6 +25,7 @@ public class Reciver extends BroadcastReceiver {
         //weather_results = (HashMap)intent.getSerializableExtra("weather_results");
         Intent notification = new Intent(context, MainActivity.class);
         notification.putExtra("need",rainFlag);
+		notification.putExtra("flag", 1);
         //notification.putExtra("weather_results",weather_results);
         Log.d("reciver",String.valueOf(rainFlag));
         //Log.d("reciver Hash",weather_results.toString());
