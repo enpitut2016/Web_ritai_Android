@@ -92,23 +92,9 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		swIsChecked = isChecked;
 		DBHelper.add("selfAreaSetting", String.valueOf(isChecked));
 
-//<<<<<<< HEAD
 		if (isChecked) adapter.add(new Setting("地域", address));
-		else {
-            adapter.delete("地域");
-
-            //((FragmentMain)getTargetFragment()).updateLatLon(isChecked,address);
-        }
+		else adapter.delete("地域");
 		((FragmentMain)(((MainActivity)activity).getKasasasuFragmentStatePagerAdapter().getItem(0))).updateLatLon(isChecked);
-/*=======
-		prefectureEditText = (EditText)getActivity().findViewById(R.id.prefecureText);
-		cityEditText = (EditText)getActivity().findViewById(R.id.cityText);
-		DBHelper.add("prefecture", prefectureEditText.getText().toString());
-		DBHelper.add("city", cityEditText.getText().toString());
-		//((FragmentMain)getTargetFragment()).updateLatLon(settingIsText, prefectureEditText.getText().toString() + cityEditText.getText().toString());
-	}
->>>>>>> origin/shunpei*/
-
 		adapter.notifyDataSetChanged();
 	}
 }

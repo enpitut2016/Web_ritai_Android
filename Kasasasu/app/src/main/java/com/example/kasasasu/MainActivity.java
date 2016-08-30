@@ -82,17 +82,7 @@ public class MainActivity extends FragmentActivity {
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		viewPager = (ViewPager) findViewById(R.id.pager);
-/*<<<<<<< HEAD
-		viewPager.setAdapter(new KasasasuFragmentStatePagerAdapter(getSupportFragmentManager()));
 
-		Intent intent = getIntent();
-		Log.d("intent" , intent.toString());
-		if (intent != null) {
-			int fragment;
-			fragment = intent.getIntExtra("fragment", 0);
-			viewPager.setCurrentItem(fragment);
-		}
-=======*/
        kasasasuFragmentStatePagerAdapter =  new KasasasuFragmentStatePagerAdapter(getSupportFragmentManager());
 		viewPager.setAdapter(kasasasuFragmentStatePagerAdapter);
         Intent intent = getIntent();
@@ -111,7 +101,6 @@ public class MainActivity extends FragmentActivity {
         }
 
 		wakeLock.release();
-//>>>>>>> origin/shunpei
 	}
 
 

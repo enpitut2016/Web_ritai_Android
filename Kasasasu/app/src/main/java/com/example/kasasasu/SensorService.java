@@ -50,8 +50,8 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private MediaPlayer mediaPlayer;
     private SensorManager sensorManager;
     double count;
-    Date lastDate = new Date();
-    Timer timer;
+    private Date lastDate = new Date();
+    private Timer timer;
     private Activity activity;
     private View v;
     private boolean rainFlag = false;
@@ -62,7 +62,6 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private KasasasuSQLiteOpenHelper DBHelper;
     private HashMap<String, String> settings;
 
-
     //閾値以上の値の時の画面呼び起こしを行う
     private PendingIntent sender;
     private Calendar calendar;
@@ -71,15 +70,12 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private HashMap<String, String> weather_results;
     public static final int RAIN_PROB = 10;
     //private MediaPlayer mediaPlayer;
-    Handler handler= new Handler();
+    private Handler handler= new Handler();
 
     @Override
     public Context getApplicationContext() {
         return super.getApplicationContext();
     }
-
-    private int waitperiod;
-
 
     @Override
     public void onCreate(){
@@ -99,49 +95,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
         if(sensors.size() > 0) {
             android.hardware.Sensor s = sensors.get(0);
             sensorManager.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
-            //context = getApplicationContext();
-            //waitperiod = 000; // 5sec
         }
-
-
-        /*latlon = new HashMap<>();
-        locate = new HashMap<>();
-        weather_results = new HashMap<>();
-
-        DBHelper = new KasasasuSQLiteOpenHelper(this);
-        settings = DBHelper.get();
-
-        Log.d("settings", settings.toString());
-        if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
-            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-            try{
-                List<Address> addressList = geocoder.getFromLocationName(settings.get("prefecture") + settings.get("city"), 1);
-                Address address = addressList.get(0);
-
-                double lat;
-                double lon;
-                lat = address.getLatitude();
-                lon = address.getLongitude();
-                latlon.put("lat", lat);
-                latlon.put("lon", lon);
-                Log.d("geocode", lat + "/" + lon);
-                Log.d("address get", address.getAdminArea() );
-                Log.d("address get", address.getLocality() );
-                Log.d("address get", address.getFeatureName());
-                locate.put("admin", address.getAdminArea());
-                locate.put("local", address.getLocality());
-                locate.put("feature", address.getFeatureName());
-
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        } else {
-            mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-
-        }*/
-
-
     }
 
     @Override
@@ -198,21 +152,6 @@ public class SensorService extends Service implements SensorEventListener, Locat
         mediaPlayer.start();
     }
 
-/*
-
-    void restart(Context cnt, int period){
-        // intent 設定で自分自身のクラスを設定
-        Intent mainActivity = new Intent(cnt, TestView.class);
-        // PendingIntent , ID=0
-        PendingIntent pendingIntent = PendingIntent.getActivity(cnt, 0, mainActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        // AlarmManager のインスタンス生成
-        AlarmManager alarmManager = (AlarmManager)cnt.getSystemService(Context.ALARM_SERVICE);
-        // １回のアラームを現在の時間からperiod（５秒）後に実行させる
-        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + period, pendingIntent);
-
-    }
-*/
-
     public void checkThreshold(double count){
         //現在の時間を保存する
         Date date = new Date();
@@ -228,40 +167,22 @@ public class SensorService extends Service implements SensorEventListener, Locat
 
             //音声を流した時間を取得しておく
             lastDate = new Date();
-                        Intent i = new Intent(getApplicationContext(), Reciver.class);
-                        i.putExtra("need",need);
+			Intent i = new Intent(getApplicationContext(), Reciver.class);
+			i.putExtra("need",need);
 
-                        //i.putExtra("weather_results",weather_results);
-                        Log.d("sensor need", String.valueOf(rainFlag));
-                        //Log.d("sensor Hash", weather_results.toString());
+			//i.putExtra("weather_results",weather_results);
+			Log.d("sensor need", String.valueOf(rainFlag));
+			//Log.d("sensor Hash", weather_results.toString());
 
-                        sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+			sender = PendingIntent.getBroadcast(getBaseContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                        calendar = Calendar.getInstance();
-                        //calendar.setTimeInMillis(System.currentTimeMillis());
-                        calendar.setTimeInMillis(0);
-                        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-            //sensorManager.unregisterListener(this);
+			calendar = Calendar.getInstance();
+			//calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.setTimeInMillis(0);
+			AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+
             stopSelf();
-
-/*                        String tmp = "Calendar: " + calendar.get(Calendar.YEAR) + "/"
-                                + (calendar.get(Calendar.MONTH)) + "/" + calendar.get(Calendar.DATE)
-                                + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":"
-                                + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
-
-                        Log.d("Tag",tmp);*/
-
-
-            //音声再生メソッド
-
-            /*
-            try{
-                Thread.sleep(5000);
-        }catch(Exception e){}
-        */
-
-           // audioPlay();
         }
     }
 
@@ -296,24 +217,6 @@ public class SensorService extends Service implements SensorEventListener, Locat
                         }
                     }
                     weather_results.remove("finished");
-
-                   /* handler.post(new Runnable() {
-                        private boolean rainFlag;
-
-                        public Runnable setRainFlag(boolean rainFlag) {
-                            this.rainFlag = rainFlag;
-                            return this;
-                        }
-                        @Override
-                        public void run() {
-                            if (rainFlag) {
-                                tv1.setText("傘が必要です。");
-                                audioPlay();
-                            } else {
-                                tv1.setText("傘は不必要です。");
-                            }
-                        }
-                    }.setRainFlag(rainFlag));*/
                 }
             }).start();
         }
