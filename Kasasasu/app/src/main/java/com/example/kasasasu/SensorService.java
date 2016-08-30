@@ -50,7 +50,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private MediaPlayer mediaPlayer;
     private SensorManager sensorManager;
     double count;
-    Date lastDate = new Date(0);
+    Date lastDate = new Date();
     Timer timer;
     private Activity activity;
     private View v;
