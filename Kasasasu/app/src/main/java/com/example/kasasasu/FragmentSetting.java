@@ -28,20 +28,30 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 	private String address;
 
 	@Override
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+
+		activity = getActivity();
+		DBHelper = new KasasasuSQLiteOpenHelper(activity);
+		settings = DBHelper.get();
+		settingArrayList = new ArrayList<>();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		//フラグメントのビューを取得
 		v = inflater.inflate(R.layout.fragment_setting2, null);
 
 		//MainActivityを取得
-		activity = getActivity();
+		//activity = getActivity();
         Log.d("activity",activity.toString());
 
 		switch1 = (Switch)v.findViewById(R.id.switch1);
 		switch1.setOnCheckedChangeListener(this);
 
 		//設定内容をDBから取得
-		DBHelper = new KasasasuSQLiteOpenHelper(getActivity());
-		settings = DBHelper.get();
+		/*DBHelper = new KasasasuSQLiteOpenHelper(getActivity());
+		settings = DBHelper.get();*/
 
 		//住所文字列を設定内容から取得
 		address = "";
@@ -49,7 +59,7 @@ public class FragmentSetting extends Fragment implements CompoundButton.OnChecke
 		if (settings.containsKey("city")) address += settings.get("city");
 
 		//ListViewのアダプターを生成
-		settingArrayList = new ArrayList<>();
+		//settingArrayList = new ArrayList<>();
 		if (swIsChecked) settingArrayList.add(new Setting("地域", address));
 		adapter = new SettingAdapter(activity, settingArrayList);
 
