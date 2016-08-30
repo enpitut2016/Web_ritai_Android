@@ -54,7 +54,7 @@ public class FragmentMain extends Fragment implements LocationListener {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		activity = getActivity();
+		//activity = getActivity();
 		v = inflater.inflate(R.layout.fragment_main, null);
 
         boolean need = getArguments().getBoolean("need");
@@ -75,11 +75,11 @@ public class FragmentMain extends Fragment implements LocationListener {
 				WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		latlon = new HashMap<>();
+		/*latlon = new HashMap<>();
         locate = new HashMap<>();
 
 		DBHelper = new KasasasuSQLiteOpenHelper(activity);
-		settings = DBHelper.get();
+		settings = DBHelper.get();*/
 
         Log.d("settings", settings.toString());
         if (settings.containsKey("selfAreaSetting") && settings.get("selfAreaSetting").equals("true")) {
@@ -157,6 +157,7 @@ public class FragmentMain extends Fragment implements LocationListener {
                 locate.put("local", address.getLocality());
                 locate.put("feature", address.getFeatureName());
 				mLocationManager.removeUpdates(this);
+				judgeNeedOfUmb();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -178,9 +179,24 @@ public class FragmentMain extends Fragment implements LocationListener {
 
     }
 
+	@Override
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+
+		activity = getActivity();
+		latlon = new HashMap<>();
+		locate = new HashMap<>();
+		DBHelper = new KasasasuSQLiteOpenHelper(activity);
+		settings = DBHelper.get();
+		weather_results = new HashMap<>();
+	}
+
 	public void updateLatLon (boolean settingIsText) {
 		if (settingIsText) {
-			Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+			if (activity == null)
+			Log.d ("activity", "null");
+			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
+
 
 			try{
 				HashMap<String, String> DBData = DBHelper.get();
@@ -202,6 +218,8 @@ public class FragmentMain extends Fragment implements LocationListener {
                 locate.put("admin", address.getAdminArea());
                 locate.put("local", address.getLocality());
                 locate.put("feature", address.getFeatureName());
+
+				judgeNeedOfUmb();
 			}catch(IOException e){
 				e.printStackTrace();
 			}

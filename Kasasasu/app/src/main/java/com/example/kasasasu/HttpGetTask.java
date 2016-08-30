@@ -85,7 +85,7 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 	protected void onPostExecute(HashMap<String, String> weather_results) {
         //mDialog.dismiss();
 
-        Log.d("size", String.valueOf(weather_results.size()));
+        //Log.d("size", String.valueOf(weather_results.size()));
        /* for (String key : weather_results.keySet()) {
             String str = weather_results.get(key);
             int prob = Integer.parseInt(String.valueOf(str.split("/")[0]));
