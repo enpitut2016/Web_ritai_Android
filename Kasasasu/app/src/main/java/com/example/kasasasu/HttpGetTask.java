@@ -34,20 +34,20 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 	private ProgressDialog mDialog = null;
 	public static final int CNT = 8;
 	//public static final int RAIN_PROB = 50;
-    private String encodedString_admin;
-    private String encodedString_local;
-    private String encodedString_feature;
+	private String encodedString_admin, encodedString_admin2;
+	private String encodedString_local, encodedString_local2;
+	private String encodedString_feature, encodedString_feature2;
     private HashMap<String, String> weather_results;
 
-    private String hour;
-    private String prob;
-    private String temperature;
+    private String hour, hour2;
+    private String prob, prob2;
+    private String temperature, temperature2;
     //private MediaPlayer mediaPlayer;
 
-	private String mUri;
+	private String mUri, mUri2;
     private KasasasuSQLiteOpenHelper DBHelper;
 
-	public HttpGetTask(Activity parentActivity, HashMap<String, String> weather_results, HashMap<String, String> location) throws UnsupportedEncodingException {
+	public HttpGetTask(Activity parentActivity, HashMap<String, String> weather_results, HashMap<String, String> location, String resultPref, String resultCity, String resultFeature) throws UnsupportedEncodingException {
 		mParentActivity = parentActivity;
 		//mTextView = textView;
 		this.weather_results = weather_results;
@@ -61,6 +61,16 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
             if(location.get("feature").matches(".*"+"区")){
                 mUri = mUri + encodedString_feature;
             }
+			/////////////////////////////////////   Tera   //////////////////////////////////////
+
+			encodedString_admin2 = URLEncoder.encode(resultPref, "UTF-8");
+			encodedString_local2 = URLEncoder.encode(resultCity, "UTF-8");
+			encodedString_feature2 = URLEncoder.encode(resultFeature, "UTF-8");
+			mUri2 = "https://shrouded-forest-60165.herokuapp.com/?pref=" + encodedString_admin2 + "&city=" +encodedString_local2;
+			if(location.get("feature").matches(".*"+"区")){
+				mUri2 = mUri2 + encodedString_feature;
+			}
+			/////////////////////////////////////////////////////////////////////////////////////
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -133,17 +143,48 @@ public class HttpGetTask extends AsyncTask<Void, Void, HashMap<String, String>>{
 			JSONArray listArray = rootObj.getJSONArray("weathers");
             Log.d("json list" ,listArray.toString());
 
+			//////////////////tera//////////////////////////////////////
+			/*URL url2 = new URL(mUri2);
+			InputStream is2 = url2.openConnection().getInputStream();
 
-            for (int i=0; i<CNT; i++) {
+			BufferedReader reader2 = new BufferedReader(new InputStreamReader(is2, "UTF-8"));
+			StringBuilder sb2 = new StringBuilder();
+			String line2;
+
+			while (null != (line2 = reader2.readLine())) {
+				sb2.append(line2);
+			}
+			String data2 = sb2.toString();
+
+			Log.d("response",data2);
+
+
+
+			JSONObject rootObj2 = new JSONObject(data2);
+			JSONArray listArray2 = rootObj2.getJSONArray("weathers");
+			Log.d("json list" ,listArray2.toString());*/
+/////////////////////////////////////////////////////////////////////////////////////////
+
+			DBHelper = new KasasasuSQLiteOpenHelper(mParentActivity);
+			for (int i=0; i<CNT; i++) {
 				JSONObject obj = listArray.getJSONObject(i);
 
                 hour = obj.getString("hour");
                 prob = obj.getString("prob");
                 temperature = obj.getString("temperature");
                 Log.d("json result", "hour:"+hour+ " prob:"+prob+ " temperature:"+temperature);
-                DBHelper = new KasasasuSQLiteOpenHelper(mParentActivity);
                 DBHelper.add(hour,prob+"/"+temperature);
 
+				////////////////////////////////////////   Tera   ////////////////////////////////////////////////
+				/*JSONObject obj2 = listArray2.getJSONObject(i);
+				hour2 = obj2.getString("hour");
+				prob2 = obj2.getString("prob");
+				temperature2 = obj2.getString("temperature");
+				Log.d("json result", "hour:"+hour2+ " prob:"+prob2+ " temperature:"+temperature2);
+				//DBHelper = new KasasasuSQLiteOpenHelper(mParentActivity);
+				DBHelper.add(hour2+"2",prob2+"/"+temperature2);*/
+				//weather_results.put(hour2+"2",prob2+"/"+temperature2);
+				//////////////////////////////////////////////////////////////////////////////////////////////////
 			}
             weather_results.put("finished","0/0");
 

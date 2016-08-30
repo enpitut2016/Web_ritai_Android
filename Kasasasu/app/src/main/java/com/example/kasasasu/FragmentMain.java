@@ -5,6 +5,8 @@ import android.content.Context;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,6 +26,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -95,9 +98,9 @@ public class FragmentMain extends Fragment implements LocationListener {
 				latlon.put("lat", lat);
 				latlon.put("lon", lon);
 				Log.d("geocode", lat + "/" + lon);
-                Log.d("address get", address.getAdminArea() );
-                Log.d("address get", address.getLocality() );
-                Log.d("address get", address.getFeatureName());
+               //Log.d("address get", address.getAdminArea() );
+                //Log.d("address get", address.getLocality() );
+                //Log.d("address get", address.getFeatureName());
                 locate.put("admin", address.getAdminArea());
                 locate.put("local", address.getLocality());
                 locate.put("feature", address.getFeatureName());
@@ -200,9 +203,11 @@ public class FragmentMain extends Fragment implements LocationListener {
 
 			try{
 				HashMap<String, String> DBData = DBHelper.get();
+				if (! (DBData.containsKey("prefecture") && DBData.containsKey("prefecture"))) return;
 				List<Address> addressList = geocoder.getFromLocationName(DBData.get("prefecture") + DBData.get("city"), 1);
 				Address address = addressList.get(0);
 
+				Log.e("address", DBData.toString());
 				double lat;
 				double lon;
 				lat = address.getLatitude();
@@ -232,11 +237,39 @@ public class FragmentMain extends Fragment implements LocationListener {
 	}
 
     private void judgeNeedOfUmb () {
-        if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
+        if (latlon.containsKey("lat") && latlon.containsKey("lon") && locate.containsKey("admin")) {
             //TextView tv1 = (TextView) v.findViewById(R.id.tv1);
             HttpGetTask task = null;
+			////////////////////////////////////////////////////////////  Tera  /////////////////////////////////////////////////////////////////////
+
+			KasasasuSQLiteOpenHelper goalDB = new KasasasuSQLiteOpenHelper(getActivity());
+			final SQLiteDatabase db = goalDB.getWritableDatabase();
+			Calendar cal = Calendar.getInstance();
+			String ymd = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)+1) + String.valueOf(cal.get(Calendar.DATE));
+			Cursor c = db.rawQuery("select goalpref from mokutekichi where date == '" + ymd + "'", null);
+			String resultPref = "";
+			boolean f = c.moveToFirst();
+			while (f) {
+				resultPref += String.format("%s", c.getString(0));
+				f = c.moveToNext();
+			}
+
+			c = db.rawQuery("select goalcity from mokutekichi where date == '" + ymd + "'", null);
+			String resultCity = "";
+			f = c.moveToFirst();
+			while (f) {
+				resultCity += String.format("%s", c.getString(0));
+				f = c.moveToNext();
+			}
+
+			String a[] = resultCity.split("市", 0);
+			resultCity = a[0]+"市";
+			String resultFeature = a.length == 2 ? a[1]: "";
+/*			Log.d("県名", resultPref);//address.getAddressLine(1) );
+            Log.d("市名", resultCity);//address.toString() );*/
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             try {
-                task = new HttpGetTask(activity, weather_results, locate);
+                task = new HttpGetTask(activity, weather_results, locate, resultPref, resultCity, resultFeature);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

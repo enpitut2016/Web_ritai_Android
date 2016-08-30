@@ -74,7 +74,7 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		ActionBar actionBar = getActionBar();
-		actionBar.setLogo(R.drawable.logo);
+		actionBar.setLogo(R.drawable.kasasasu_white);
 		actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setDisplayUseLogoEnabled(true);
 		Log.d("Tag","test");

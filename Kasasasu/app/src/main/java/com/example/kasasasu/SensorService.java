@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -68,7 +70,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private Context context;
 
     private HashMap<String, String> weather_results;
-    public static final int RAIN_PROB = 10;
+    public static final int RAIN_PROB = 30;
     //private MediaPlayer mediaPlayer;
     private Handler handler= new Handler();
 
@@ -190,8 +192,36 @@ public class SensorService extends Service implements SensorEventListener, Locat
         if (latlon.containsKey("lat") && latlon.containsKey("lon")) {
             //TextView tv1 = (TextView) v.findViewById(R.id.tv1);
             HttpGetTask task = null;
+			////////////////////////////////////////////////////////////  Tera  /////////////////////////////////////////////////////////////////////
+
+			KasasasuSQLiteOpenHelper goalDB = new KasasasuSQLiteOpenHelper(getActivity());
+			final SQLiteDatabase db = goalDB.getWritableDatabase();
+			Calendar cal = Calendar.getInstance();
+			String ymd = String.valueOf(cal.get(Calendar.YEAR)) + String.valueOf(cal.get(Calendar.MONTH)+1) + String.valueOf(cal.get(Calendar.DATE));
+			Cursor c = db.rawQuery("select goalpref from mokutekichi where date == '" + ymd + "'", null);
+			String resultPref = "";
+			boolean f = c.moveToFirst();
+			while (f) {
+				resultPref += String.format("%s", c.getString(0));
+				f = c.moveToNext();
+			}
+
+			c = db.rawQuery("select goalcity from mokutekichi where date == '" + ymd + "'", null);
+			String resultCity = "";
+			f = c.moveToFirst();
+			while (f) {
+				resultCity += String.format("%s", c.getString(0));
+				f = c.moveToNext();
+			}
+
+			String a[] = resultCity.split("市", 0);
+			resultCity = a[0]+"市";
+			String resultFeature = a.length == 2 ? a[1]: "";
+/*			Log.d("県名", resultPref);//address.getAddressLine(1) );
+            Log.d("市名", resultCity);//address.toString() );*/
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             try {
-                task = new HttpGetTask(null, weather_results, locate);
+                task = new HttpGetTask(null, weather_results, locate, resultPref, resultCity, resultFeature);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
