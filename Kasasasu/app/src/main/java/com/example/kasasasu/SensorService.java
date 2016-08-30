@@ -63,7 +63,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private Calendar calendar;
     private Context context;
     private int waitperiod;
-
+    private String def="puyue.mp3";
 
     @Override
     public void onCreate(){
@@ -150,7 +150,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
         // インタンスを生成
         mediaPlayer = new MediaPlayer();
         //音楽ファイル名, あるいはパス
-        String filePath = "assets/puyue.mp3";
+        String filePath = def;
         try {
             // assetsから mp3 ファイルを読み込み
             AssetFileDescriptor afdescripter = getAssets().openFd(filePath);
@@ -213,6 +213,10 @@ public class SensorService extends Service implements SensorEventListener, Locat
         }catch(Exception e){}
         */
 
+            Log.d("output",FragmentRecording.listSoundPath);
+if(!FragmentRecording.listSoundPath.equals("")){
+    def = FragmentRecording.listSoundPath;
+}
             audioPlay();
         }
     }

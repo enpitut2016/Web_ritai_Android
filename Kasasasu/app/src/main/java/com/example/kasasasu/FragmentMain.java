@@ -129,6 +129,19 @@ public class FragmentMain extends Fragment {
 
 		return v;
 	}
+
+
+
+/*
+	@Override
+	public void onStop(){
+		super.onStop();
+		activity.finish();
+
+	}
+*/
+
+
 /*
 	public void updateLatLon (boolean settingIsText, String strAddress) {
 		if (settingIsText) {
